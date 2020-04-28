@@ -1,1 +1,51 @@
 
+// cqjtu_OJ_1084.cpp  地板游戏 
+#include<iostream>
+#include<math.h>
+#include<time.h> 
+using namespace std;
+bool lights[20][20];		// 因为每次测试数据的数组大小不同，所以无法精确给定义，但是总的而言是小于10的，所以直接定义一个10*10的数组 
+int i,least_i;				//	i表示当前方法的步数，least_i表示最优解的步数 
+int m,n;					// 测试数据输入的行数和列数 
+void press(int x,int y)
+{
+	lights[x][y]	= 1 - lights[x][y];    			//本身状态求反
+   	lights[x-1][y]  = 1 - lights[x-1][y];  			// 将上边的数求反 
+    lights[x][y-1]  = 1 - lights[x][y-1];			// 将左边的数求反 
+  	lights[x+1][y]  = 1 - lights[x+1][y];			// 将下边的数求反 
+    lights[x][y+1]  = 1 - lights[x][y+1];			// 将右边的数求反 
+	i++; 		
+}
+int main()
+{	
+	time_t time, start, end; 
+	start = clock( ); 
+	 freopen("1084.in","r",stdin);
+	 freopen("1084.out","w",stdout);
+	int x,y,z;
+	while (cin>>n>>m)
+	{
+		if(m==0&&n==0) break;
+		least_i=9999;
+		for(z=0;z<pow(2,m);z++)					//第一行共有2^m种状态			
+		{	 
+			i=0; 
+		for(x=1;x<=n;x++)
+			for(y=1;y<=m;y++)
+				lights[x][y]=1;
+		for(y=1;y<=m;y++)					//二进制枚举 
+			if(z&(1<<(y-1)))
+				press(1,y);		
+		for(x=2;x<=n;x++)
+			for(y=1;y<=m;y++)
+				if(lights[x-1][y]==1)		//上一行的灯亮（1），则要熄掉它 
+					press(x,y);				//每次按下灯步数都要自增一，用于得出最优解 ;			
+		for(y=1;y<=m;y++)
+			if(lights[n][y]==1)		break;
+		if(y>=m+1)		 
+			if(i<least_i)	least_i=i;	}
+	cout<<least_i<<endl;
+	}
+	end = clock( ); 
+	time = end - start;	cout<<"程序运行时间为"<<time<<"ms"<<endl; 	
+} 
